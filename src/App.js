@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './App.css';
 import MoviesList from './Components/MoviesList';
 
@@ -8,37 +8,38 @@ function App() {
   const [error, setError] = useState(null);
   const retryInterval = useRef(null);
 
-  async function fetchMoviesHandler() {
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('https://swapi.py4e.com/api/film/');
+      const response = await fetch('https://swapi.py4e.com/api/films/');
       if (!response.ok) {
         throw new Error('Something went wrong ....Retrying');
       }
 
       const data = await response.json();
-      setTimeout(() => {
-        const transformedMovies = data.results.map((movieData) => {
-          return {
-            id: movieData.episode_id,
-            title: movieData.title,
-            openingText: movieData.opening_crawl,
-            releaseDate: movieData.release_date,
-          };
-        });
-        setMovies(transformedMovies);
-      }, 1000);
+      const transformedMovies = data.results.map((movieData) => {
+        return {
+          id: movieData.episode_id,
+          title: movieData.title,
+          openingText: movieData.opening_crawl,
+          releaseDate: movieData.release_date,
+        };
+      });
+      setMovies(transformedMovies);
 
       clearInterval(retryInterval.current);
     } catch (error) {
       setError(error.message);
       retryInterval.current = setTimeout(fetchMoviesHandler, 5000);
     }
-
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(()=>{
+    fetchMoviesHandler();
+  },[fetchMoviesHandler]);
 
   function cancelRetryHandler() {
     clearInterval(retryInterval.current);
