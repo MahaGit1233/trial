@@ -1,0 +1,35 @@
+.movieform {
+    display: block;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .formdata label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    padding-top: 1rem;
+  }
+  
+  .formdata input {
+    font: inherit;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 20rem;
+    max-width: 100%;
+  }
+  
+form {
+    margin-left: 25%;
+    margin-right: 25%;
+    background-color: bisque;
+    border-radius: 10px;
+}
+
+.formbutton {
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
+  

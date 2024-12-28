@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './App.css';
 import MoviesList from './Components/MoviesList';
+import MoviesForm from './Components/MoviesForm';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -37,17 +38,22 @@ function App() {
     setIsLoading(false);
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchMoviesHandler();
-  },[fetchMoviesHandler]);
+  }, [fetchMoviesHandler]);
 
   function cancelRetryHandler() {
     clearInterval(retryInterval.current);
     setError(null);
   }
 
+  const saveDataHandler = useCallback((enteredData) => {
+    setMovies((prevState) => [enteredData, ...prevState]);
+  }, []);
+
   return (
     <React.Fragment>
+      <MoviesForm onSaveData={saveDataHandler} />
       <section className="button">
         <button onClick={fetchMoviesHandler}>
           Fetch Movies
