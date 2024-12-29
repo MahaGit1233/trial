@@ -7,33 +7,34 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const retryInterval = useRef(null);
 
   const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('https://swapi.py4e.com/api/films/');
+      const response = await fetch('https://react-api-73b69-default-rtdb.firebaseio.com/movies.json');
       if (!response.ok) {
         throw new Error('Something went wrong ....Retrying');
       }
 
       const data = await response.json();
-      const transformedMovies = data.results.map((movieData) => {
-        return {
-          id: movieData.episode_id,
-          title: movieData.title,
-          openingText: movieData.opening_crawl,
-          releaseDate: movieData.release_date,
-        };
-      });
-      setMovies(transformedMovies);
 
-      clearInterval(retryInterval.current);
+      const loadedMovies = [];
+
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        });
+      }
+      console.log(loadedMovies);
+
+      setMovies(loadedMovies);
     } catch (error) {
       setError(error.message);
-      retryInterval.current = setTimeout(fetchMoviesHandler, 5000);
     }
     setIsLoading(false);
   }, []);
@@ -42,14 +43,31 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
+  const saveDataHandler = useCallback(async (enteredData) => {
+    const response = await fetch('https://react-api-73b69-default-rtdb.firebaseio.com/movies.json', {
+      method: "POST",
+      body: JSON.stringify(enteredData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+  }, []);
+
   function cancelRetryHandler() {
-    clearInterval(retryInterval.current);
     setError(null);
   }
 
-  const saveDataHandler = useCallback((enteredData) => {
-    setMovies((prevState) => [enteredData, ...prevState]);
-  }, []);
+  const deleteDataHandler = async (id) => {
+    const response = await fetch(`https://react-api-73b69-default-rtdb.firebaseio.com/movies/${id}.json`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    setMovies((prevState) => prevState.filter((movie) => movie.id !== id));
+  }
 
   return (
     <React.Fragment>
@@ -69,7 +87,7 @@ function App() {
         )}
       </section>
       <section className="movies">
-        <MoviesList movies={movies} />
+        <MoviesList movies={movies} onDelete={deleteDataHandler} />
       </section>
     </React.Fragment>
   );

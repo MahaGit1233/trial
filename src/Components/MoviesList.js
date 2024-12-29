@@ -4,8 +4,8 @@ import Movies from "./Movies";
 const MoviesList = (props) => {
     return (
         <ul>
-            {props.movies.map((movie)=>(
-                <Movies key={movie.id} title={movie.title} releaseDate={movie.release} openingText={movie.openingText} />
+            {props.movies.map((movie) => (
+                <Movies onDelMovie={props.onDelete} id={movie.id} key={movie.id} title={movie.title} releaseDate={movie.release} openingText={movie.openingText} />
             ))}
         </ul>
     );

@@ -21,13 +21,10 @@ const MoviesForm = (props) => {
     const formSubmitHandler = (event) => {
         event.preventDefault();
         const movieData = {
-            id: Math.random(),
             title: enteredTitle,
             openingText: enteredText,
             releaseDate: enteredDate,
         };
-        console.log(movieData);
-        
         props.onSaveData(movieData);
         setEnteredTitle("");
         setEnteredText("");
@@ -43,7 +40,7 @@ const MoviesForm = (props) => {
                 </div>
                 <div className="formdata">
                     <label htmlFor='formtext'>Opening Text:</label>
-                    <input id='formtext' value={enteredText} type='text' size={30} onChange={textChangeHandler} />
+                    <input id='formtext' value={enteredText} type='text' onChange={textChangeHandler} />
                 </div>
                 <div className="formdata">
                     <label htmlFor='formdate'>Release date:</label>
